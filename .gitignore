@@ -1,0 +1,9 @@
+build/
+devel/
+install/
+logs/
+.vscode/
+.catkin_tools/
+.catkin_workspace
+my_catkin_ws.workspace
+my_catkin_ws.workspace.user
