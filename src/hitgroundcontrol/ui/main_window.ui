@@ -24,6 +24,9 @@
    <layout class="QHBoxLayout">
     <item>
      <widget class="QTabWidget" name="tab_manager">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="minimumSize">
        <size>
         <width>100</width>
@@ -34,7 +37,7 @@
        <locale language="English" country="Australia"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_log">
        <attribute name="title">
@@ -42,7 +45,11 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QPlainTextEdit" name="txtEdit_launchVins"/>
+         <widget class="QPlainTextEdit" name="txtEdit_launchVins">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

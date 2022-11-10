@@ -82,6 +82,13 @@ void MainWindow::on_button_connect_clicked(bool check ) {
       ui.line_edit_topic->setReadOnly(true);
     }
   }
+  // 绑定udp端口
+  if (launch_socket->bind(10000)) {
+    ui.txtEdit_launchVins->appendPlainText("**已经绑定成功");
+    ui.txtEdit_launchVins->appendPlainText("**绑定端口：" + QString::number(launch_socket->localPort()));
+  } else {
+    ui.txtEdit_launchVins->appendPlainText("**绑定失败");
+  }
 }
 
 
@@ -94,26 +101,7 @@ void MainWindow::on_checkbox_use_environment_stateChanged(int state) {
   }
   ui.line_edit_master->setEnabled(enabled);
   ui.line_edit_host->setEnabled(enabled);
-  //ui.line_edit_topic->setEnabled(enabled);
 }
-
-/*****************************************************************************
-** Implemenation [Slots][manually connected]
-*****************************************************************************/
-
-/**
- * This function is signalled by the underlying model. When the model changes,
- * this will drop the cursor down to the last line in the QListview to ensure
- * the user can always see the latest log message.
- */
-
-/*****************************************************************************
-** Implementation [Menu]
-*****************************************************************************/
-
-/*****************************************************************************
-** Implementation [Configuration]
-*****************************************************************************/
 
 void MainWindow::ReadSettings() {
   QSettings settings("Qt-Ros Package", "hitgroundcontrol");
@@ -132,7 +120,6 @@ void MainWindow::ReadSettings() {
   if ( checked ) {
     ui.line_edit_master->setEnabled(false);
     ui.line_edit_host->setEnabled(false);
-    //ui.line_edit_topic->setEnabled(false);
   }
 }
 
@@ -158,7 +145,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void hitgroundcontrol::MainWindow::on_btn_launchVins_clicked()
 {
-
+  QString target_ip("127.0.0.1");
+  QHostAddress target_addr(target_ip);
+  QString msg("");
+  QByteArray str = msg.toUtf8();
+  launch_socket->writeDatagram(str, target_addr, 9999);
 }
 
 void hitgroundcontrol::MainWindow::on_launch_socket_state_change(QAbstractSocket::SocketState)
