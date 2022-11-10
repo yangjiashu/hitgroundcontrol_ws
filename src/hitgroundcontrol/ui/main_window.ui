@@ -14,7 +14,7 @@
    <string>QRosApp</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources/images.qrc">
+   <iconset>
     <normaloff>:/images/icon.png</normaloff>:/images/icon.png</iconset>
   </property>
   <property name="locale">
@@ -34,32 +34,27 @@
        <locale language="English" country="Australia"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
-      <widget class="QWidget" name="tab_status">
+      <widget class="QWidget" name="tab_log">
        <attribute name="title">
-        <string>Ros Communications</string>
+        <string>启动日志</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QGroupBox" name="groupBox_12">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="title">
-           <string>Logging</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_3">
-           <item row="0" column="0">
-            <widget class="QListView" name="view_logging"/>
-           </item>
-          </layout>
-         </widget>
+         <widget class="QPlainTextEdit" name="txtEdit_launchVins"/>
         </item>
        </layout>
+      </widget>
+      <widget class="QWidget" name="tab_rviz">
+       <attribute name="title">
+        <string>rviz</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_topic">
+       <attribute name="title">
+        <string>topic</string>
+       </attribute>
       </widget>
      </widget>
     </item>
@@ -71,21 +66,9 @@
      <x>0</x>
      <y>0</y>
      <width>944</width>
-     <height>21</height>
+     <height>28</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_File">
-    <property name="title">
-     <string>&amp;App</string>
-    </property>
-    <addaction name="action_Preferences"/>
-    <addaction name="separator"/>
-    <addaction name="actionAbout"/>
-    <addaction name="actionAbout_Qt"/>
-    <addaction name="separator"/>
-    <addaction name="action_Quit"/>
-   </widget>
-   <addaction name="menu_File"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dock_status">
@@ -98,7 +81,7 @@
    <property name="minimumSize">
     <size>
      <width>325</width>
-     <height>368</height>
+     <height>537</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -255,6 +238,34 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="btn_launchVins">
+          <property name="text">
+           <string>启动vins-fusion</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_config">
+          <property name="text">
+           <string>修改配置(标定)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_takeoff">
+          <property name="text">
+           <string>自动起飞</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_launchEgo">
+          <property name="text">
+           <string>启动ego_planner</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer_3">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -313,9 +324,7 @@
    </property>
   </action>
  </widget>
- <resources>
-  <include location="../resources/images.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>action_Quit</sender>

@@ -12,12 +12,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # qt_build provides the qt cmake glue, roscpp the comms for a default talker
 find_package(catkin REQUIRED COMPONENTS qt_build roscpp rviz)
-find_package(Qt5 REQUIRED Core Widgets)
-set(QT_LIBRARIES Qt5::Widgets)
 include_directories(${catkin_INCLUDE_DIRS})
+find_package(Qt5 REQUIRED Core Widgets Network)
+include_directories(${Qt5_INCLUDE_DIRS})
+set(QT_LIBRARIES Qt5::Widgets Qt5::Network)
+
 # Use this to define what the package will export (e.g. libs, headers).
 # Since the default here is to produce only a binary, we don't worry about
-# exporting anything. 
+# exporting anything.
 catkin_package()
 
 ##############################################################################
