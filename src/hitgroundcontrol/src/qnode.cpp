@@ -26,12 +26,22 @@ namespace hitgroundcontrol {
 /*****************************************************************************
 ** Implementation
 *****************************************************************************/
-
-QNode::QNode(int argc, char** argv ) :
+QNode::QNode(int argc, char** argv, uint16_t port):
         init_argc(argc),
-        init_argv(argv)
-{}
-
+        init_argv(argv),
+        minPort(port)
+{
+  launchSteps = {"vins", "px4ctrl", "takeoff", "planner"};
+  for (int i = 0; i < launchSteps.length(); i++) {
+    QUdpSocket *socket = new QUdpSocket(this);
+    socket->bind(minPort + i);
+    udpMap[launchSteps[i]] = socket;
+  }
+  connect(udpMap[launchSteps[0]], SIGNAL(readyRead()), this, SLOT(onVinsReadyRead()));
+  connect(udpMap[launchSteps[1]], SIGNAL(readyRead()), this, SLOT(onPx4ctrlReadyRead()));
+  connect(udpMap[launchSteps[2]], SIGNAL(readyRead()), this, SLOT(onTakeoffReadyRead()));
+  connect(udpMap[launchSteps[3]], SIGNAL(readyRead()), this, SLOT(onPlannerReadyRead()));
+}
 QNode::~QNode() {
   if(ros::isStarted()) {
     ros::shutdown(); // explicitly needed since we use ros::start();
@@ -75,5 +85,41 @@ void QNode::run() {
   }
   std::cout << "Ros shutdown, proceeding to close the gui." << std::endl;
   Q_EMIT rosShutdown(); // used to signal the gui for a shutdown (useful to roslaunch)
+}
+void QNode::launchCmd(char* cmd) {
+  QString target_ip("127.0.0.1");
+  QHostAddress target_addr(target_ip);
+  // ROS_INFO("开始传输%s\n", cmd);
+  udpMap[cmd]->writeDatagram(cmd, target_addr, 9999);
+  // ROS_INFO("传输结束%s\n", cmd);
+}
+void QNode::onVinsReadyRead() {
+  QByteArray datagram;
+  datagram.resize(udpMap["vins"]->pendingDatagramSize());
+  udpMap["vins"]->readDatagram(datagram.data(), datagram.size());
+  QString str = datagram.data();
+  // ROS_INFO("vins日志返回:%s\n", str.toStdString());
+  Q_EMIT showLog("vins", str);
+}
+void QNode::onPx4ctrlReadyRead() {
+  QByteArray datagram;
+  datagram.resize(udpMap["px4ctrl"]->pendingDatagramSize());
+  udpMap["px4ctrl"]->readDatagram(datagram.data(), datagram.size());
+  QString str = datagram.data();
+  Q_EMIT showLog("px4ctrl", str);
+}
+void QNode::onTakeoffReadyRead() {
+  QByteArray datagram;
+  datagram.resize(udpMap["takeoff"]->pendingDatagramSize());
+  udpMap["takeoff"]->readDatagram(datagram.data(), datagram.size());
+  QString str = datagram.data();
+  Q_EMIT showLog("takeoff", str);
+}
+void QNode::onPlannerReadyRead() {
+  QByteArray datagram;
+  datagram.resize(udpMap["planner"]->pendingDatagramSize());
+  udpMap["planner"]->readDatagram(datagram.data(), datagram.size());
+  QString str = datagram.data();
+  Q_EMIT showLog("planner", str);
 }
 }  // namespace hitgroundcontrol

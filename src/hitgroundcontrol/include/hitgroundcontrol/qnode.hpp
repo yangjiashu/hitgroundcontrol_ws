@@ -23,9 +23,7 @@
 #endif
 #include <string>
 #include <QThread>
-#include <QStringListModel>
-
-
+#include <QUdpSocket>
 /*****************************************************************************
 ** Namespaces
 *****************************************************************************/
@@ -35,24 +33,34 @@ namespace hitgroundcontrol {
 /*****************************************************************************
 ** Class
 *****************************************************************************/
-
 class QNode : public QThread {
   Q_OBJECT
 public:
-  QNode(int argc, char** argv );
+  QNode(int argc, char** argv, uint16_t minPort);
   virtual ~QNode();
   bool init();
   bool init(const std::string &master_url, const std::string &host_url);
   void run();
+  void launchCmd(char* cmd);
+
 
 Q_SIGNALS:
   void rosShutdown();
+  void showLog(char *type, QString logMsg);
 
 private:
   int init_argc;
   char** init_argv;
-};
+  int minPort;
+  QMap<QString, QUdpSocket*> udpMap;
+  QList<QString> launchSteps;
 
+private slots:
+  void onVinsReadyRead();
+  void onPx4ctrlReadyRead();
+  void onTakeoffReadyRead();
+  void onPlannerReadyRead();
+};
 }  // namespace hitgroundcontrol
 
 #endif /* hitgroundcontrol_QNODE_HPP_ */

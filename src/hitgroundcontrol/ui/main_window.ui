@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>944</width>
-    <height>704</height>
+    <width>1065</width>
+    <height>769</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,8 +21,8 @@
    <locale language="English" country="Australia"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
      <widget class="QTabWidget" name="tab_manager">
       <property name="enabled">
        <bool>true</bool>
@@ -43,13 +43,22 @@
        <attribute name="title">
         <string>启动日志</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
          <widget class="QPlainTextEdit" name="txtEdit_launchVins">
           <property name="enabled">
            <bool>true</bool>
           </property>
          </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QPlainTextEdit" name="txtEdit_launchTakeoff"/>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPlainTextEdit" name="txtEdit_launchPx4ctrl"/>
+        </item>
+        <item row="4" column="1">
+         <widget class="QPlainTextEdit" name="txtEdit_launchPlanner"/>
         </item>
        </layout>
       </widget>
@@ -72,7 +81,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>944</width>
+     <width>1065</width>
      <height>28</height>
     </rect>
    </property>
@@ -88,7 +97,7 @@
    <property name="minimumSize">
     <size>
      <width>325</width>
-     <height>537</height>
+     <height>574</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -252,6 +261,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="btn_launchPx4ctrl">
+          <property name="text">
+           <string>启动px4ctrl</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="btn_config">
           <property name="text">
            <string>修改配置(标定)</string>
@@ -259,14 +275,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btn_takeoff">
+         <widget class="QPushButton" name="btn_launchTakeoff">
           <property name="text">
            <string>自动起飞</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btn_launchEgo">
+         <widget class="QPushButton" name="btn_launchPlanner">
           <property name="text">
            <string>启动ego_planner</string>
           </property>

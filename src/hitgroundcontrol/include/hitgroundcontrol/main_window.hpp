@@ -51,15 +51,19 @@ public Q_SLOTS:
   void on_button_connect_clicked(bool check);
   void on_checkbox_use_environment_stateChanged(int state);
 
+
 private slots:
+  void on_show_log_emit(char* type, QString logMsg);
   void on_btn_launchVins_clicked();
-  void on_launch_socket_state_change(QAbstractSocket::SocketState);
-  void on_launch_socket_ready_read();
+  void on_btn_launchTakeoff_clicked();
+  void on_btn_launchPlanner_clicked();
+  void on_btn_launchPx4ctrl_clicked();
 
 private:
+  int argc;
+  char **argv;
   Ui::MainWindowDesign ui;
-  QNode qnode;
-  QUdpSocket *launch_socket;
+  QList<QNode*> nodeList;
 };
 
 } // namespace hitgroundcontrol

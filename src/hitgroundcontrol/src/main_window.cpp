@@ -28,29 +28,18 @@ using namespace Qt;
 *****************************************************************************/
 
 MainWindow::MainWindow(int argc, char** argv, QWidget *parent)
-        : QMainWindow(parent)
-        , qnode(argc,argv)
+        : argc(argc), argv(argv), QMainWindow(parent)
 {
   ui.setupUi(this); // Calling this incidentally connects all ui's triggers to on_...() callbacks in this class.
   ReadSettings();
   setWindowIcon(QIcon(":/images/icon.png"));
   ui.tab_manager->setCurrentIndex(0); // ensure the first tab is showing - qt-designer should have this already hardwired, but often loses it (settings?).
-  QObject::connect(&qnode, SIGNAL(rosShutdown()), this, SLOT(close()));
   if ( ui.checkbox_remember_settings->isChecked() ) {
     on_button_connect_clicked(true);
   }
-
-  launch_socket = new QUdpSocket(this);
-  connect(launch_socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(on_launch_socket_state_change(QAbstractSocket::SocketState)));
-  on_launch_socket_state_change(launch_socket->state());
-  connect(launch_socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(on_launch_socket_state_change(QAbstractSocket::SocketState)));
 }
 
 MainWindow::~MainWindow() {}
-
-/*****************************************************************************
-** Implementation [Slots]
-*****************************************************************************/
 
 void MainWindow::showNoMasterMessage() {
   QMessageBox msgBox;
@@ -65,14 +54,18 @@ void MainWindow::showNoMasterMessage() {
  */
 
 void MainWindow::on_button_connect_clicked(bool check ) {
+  QNode *node = new QNode(argc, argv, 60010);
+  nodeList.append(node);
+  QObject::connect(node, SIGNAL(rosShutdown()), this, SLOT(close()));
+  QObject::connect(node, SIGNAL(showLog(char*, QString)), this, SLOT(on_show_log_emit(char*, QString)));
   if ( ui.checkbox_use_environment->isChecked() ) {
-    if ( !qnode.init() ) {
+    if ( !node->init() ) {
       showNoMasterMessage();
     } else {
       ui.button_connect->setEnabled(false);
     }
   } else {
-    if ( ! qnode.init(ui.line_edit_master->text().toStdString(),
+    if ( !node->init(ui.line_edit_master->text().toStdString(),
                       ui.line_edit_host->text().toStdString()) ) {
       showNoMasterMessage();
     } else {
@@ -81,13 +74,6 @@ void MainWindow::on_button_connect_clicked(bool check ) {
       ui.line_edit_host->setReadOnly(true);
       ui.line_edit_topic->setReadOnly(true);
     }
-  }
-  // 绑定udp端口
-  if (launch_socket->bind(10000)) {
-    ui.txtEdit_launchVins->appendPlainText("**已经绑定成功");
-    ui.txtEdit_launchVins->appendPlainText("**绑定端口：" + QString::number(launch_socket->localPort()));
-  } else {
-    ui.txtEdit_launchVins->appendPlainText("**绑定失败");
   }
 }
 
@@ -140,24 +126,22 @@ void MainWindow::closeEvent(QCloseEvent *event)
   QMainWindow::closeEvent(event);
 }
 
+void MainWindow::on_show_log_emit(char* type, QString logMsg) {
+  // TODO: 这个地方有问题 type参数
+  printf("%s\n", type);
+  ui.txtEdit_launchVins->appendPlainText(logMsg);
+}
+void MainWindow::on_btn_launchVins_clicked() {
+  nodeList[0]->launchCmd("vins");
+}
+void MainWindow::on_btn_launchPx4ctrl_clicked() {
+  nodeList[0]->launchCmd("px4ctrl");
+}
+void MainWindow::on_btn_launchTakeoff_clicked() {
+  nodeList[0]->launchCmd("takeoff");
+}
+void MainWindow::on_btn_launchPlanner_clicked() {
+  nodeList[0]->launchCmd("planner");
+}
 }  // namespace hitgroundcontrol
 
-
-void hitgroundcontrol::MainWindow::on_btn_launchVins_clicked()
-{
-  QString target_ip("127.0.0.1");
-  QHostAddress target_addr(target_ip);
-  QString msg("");
-  QByteArray str = msg.toUtf8();
-  launch_socket->writeDatagram(str, target_addr, 9999);
-}
-
-void hitgroundcontrol::MainWindow::on_launch_socket_state_change(QAbstractSocket::SocketState)
-{
-
-}
-
-void hitgroundcontrol::MainWindow::on_launch_socket_ready_read()
-{
-
-}
