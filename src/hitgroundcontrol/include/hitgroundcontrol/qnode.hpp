@@ -39,7 +39,7 @@ public:
   QNode(int argc, char** argv, uint16_t minPort);
   virtual ~QNode();
   bool init();
-  bool init(const std::string &master_url, const std::string &host_url);
+  bool init(const std::string &master_url);
   void run();
   void launchCmd(char* cmd);
 

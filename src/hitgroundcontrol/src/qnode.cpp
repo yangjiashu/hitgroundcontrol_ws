@@ -62,10 +62,9 @@ bool QNode::init() {
   return true;
 }
 
-bool QNode::init(const std::string &master_url, const std::string &host_url) {
+bool QNode::init(const std::string &master_url) {
   std::map<std::string,std::string> remappings;
   remappings["__master"] = master_url;
-  remappings["__hostname"] = host_url;
   ros::init(remappings,"hitgroundcontrol");
   if ( ! ros::master::check() ) {
     return false;
