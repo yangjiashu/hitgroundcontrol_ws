@@ -57,7 +57,7 @@ void MainWindow::on_button_connect_clicked(bool check ) {
   QNode *node = new QNode(argc, argv, 60010);
   nodeList.append(node);
   QObject::connect(node, SIGNAL(rosShutdown()), this, SLOT(close()));
-  QObject::connect(node, SIGNAL(showLog(char*, QString)), this, SLOT(on_show_log_emit(char*, QString)));
+  QObject::connect(node, SIGNAL(showLog(char*, char*)), this, SLOT(on_show_log_emit(char*, char*)));
   if ( ui.checkbox_use_environment->isChecked() ) {
     if ( !node->init() ) {
       showNoMasterMessage();
@@ -126,10 +126,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
   QMainWindow::closeEvent(event);
 }
 
-void MainWindow::on_show_log_emit(char* type, QString logMsg) {
-  // TODO: 这个地方有问题 type参数
-  printf("%s\n", type);
-  ui.txtEdit_launchVins->appendPlainText(logMsg);
+void MainWindow::on_show_log_emit(char *type, char *logMsg) {
+  if (strcmp(type, "vins") == 0)
+    ui.txtEdit_launchVins->appendPlainText(logMsg);
+  if (strcmp(type, "px4ctrl") == 0)
+    ui.txtEdit_launchPx4ctrl->appendPlainText(logMsg);
+  if (strcmp(type, "takeoff") == 0)
+    ui.txtEdit_launchTakeoff->appendPlainText(logMsg);
+  if (strcmp(type, "planner") == 0)
+    ui.txtEdit_launchPlanner->appendPlainText(logMsg);
 }
 void MainWindow::on_btn_launchVins_clicked() {
   nodeList[0]->launchCmd("vins");

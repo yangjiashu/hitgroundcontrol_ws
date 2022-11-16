@@ -53,7 +53,7 @@ public Q_SLOTS:
 
 
 private slots:
-  void on_show_log_emit(char* type, QString logMsg);
+  void on_show_log_emit(char *type, char *logMsg);
   void on_btn_launchVins_clicked();
   void on_btn_launchTakeoff_clicked();
   void on_btn_launchPlanner_clicked();

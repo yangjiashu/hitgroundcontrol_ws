@@ -46,7 +46,7 @@ public:
 
 Q_SIGNALS:
   void rosShutdown();
-  void showLog(char *type, QString logMsg);
+  void showLog(char *type, char *logMsg);
 
 private:
   int init_argc;

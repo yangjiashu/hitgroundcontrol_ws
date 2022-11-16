@@ -86,40 +86,33 @@ void QNode::run() {
   std::cout << "Ros shutdown, proceeding to close the gui." << std::endl;
   Q_EMIT rosShutdown(); // used to signal the gui for a shutdown (useful to roslaunch)
 }
-void QNode::launchCmd(char* cmd) {
+void QNode::launchCmd(char *cmd) {
   QString target_ip("127.0.0.1");
   QHostAddress target_addr(target_ip);
-  // ROS_INFO("开始传输%s\n", cmd);
   udpMap[cmd]->writeDatagram(cmd, target_addr, 9999);
-  // ROS_INFO("传输结束%s\n", cmd);
 }
 void QNode::onVinsReadyRead() {
-  QByteArray datagram;
-  datagram.resize(udpMap["vins"]->pendingDatagramSize());
-  udpMap["vins"]->readDatagram(datagram.data(), datagram.size());
-  QString str = datagram.data();
-  // ROS_INFO("vins日志返回:%s\n", str.toStdString());
-  Q_EMIT showLog("vins", str);
+  char buf[512];
+  qint64 len = udpMap["vins"]->pendingDatagramSize();
+  udpMap["vins"]->readDatagram(buf, len);
+  Q_EMIT showLog("vins", buf);
 }
 void QNode::onPx4ctrlReadyRead() {
-  QByteArray datagram;
-  datagram.resize(udpMap["px4ctrl"]->pendingDatagramSize());
-  udpMap["px4ctrl"]->readDatagram(datagram.data(), datagram.size());
-  QString str = datagram.data();
-  Q_EMIT showLog("px4ctrl", str);
+  char buf[512];
+  qint64 len = udpMap["px4ctrl"]->pendingDatagramSize();
+  udpMap["px4ctrl"]->readDatagram(buf, len);
+  Q_EMIT showLog("px4ctrl", buf);
 }
 void QNode::onTakeoffReadyRead() {
-  QByteArray datagram;
-  datagram.resize(udpMap["takeoff"]->pendingDatagramSize());
-  udpMap["takeoff"]->readDatagram(datagram.data(), datagram.size());
-  QString str = datagram.data();
-  Q_EMIT showLog("takeoff", str);
+  char buf[512];
+  qint64 len = udpMap["takeoff"]->pendingDatagramSize();
+  udpMap["takeoff"]->readDatagram(buf, len);
+  Q_EMIT showLog("takeoff", buf);
 }
 void QNode::onPlannerReadyRead() {
-  QByteArray datagram;
-  datagram.resize(udpMap["planner"]->pendingDatagramSize());
-  udpMap["planner"]->readDatagram(datagram.data(), datagram.size());
-  QString str = datagram.data();
-  Q_EMIT showLog("planner", str);
+  char buf[512];
+  qint64 len = udpMap["planner"]->pendingDatagramSize();
+  udpMap["planner"]->readDatagram(buf, len);
+  Q_EMIT showLog("planner", buf);
 }
 }  // namespace hitgroundcontrol
