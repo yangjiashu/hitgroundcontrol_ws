@@ -63,6 +63,12 @@ void MainWindow::on_button_connect_clicked(bool check ) {
       showNoMasterMessage();
     } else {
       ui.button_connect->setEnabled(false);
+
+      ui.btn_config->setEnabled(true);
+      ui.btn_launchPlanner->setEnabled(true);
+      ui.btn_launchPx4ctrl->setEnabled(true);
+      ui.btn_launchTakeoff->setEnabled(true);
+      ui.btn_launchVins->setEnabled(true);
     }
   } else {
     if ( !node->init(ui.line_edit_master->text().toStdString(),
@@ -73,6 +79,12 @@ void MainWindow::on_button_connect_clicked(bool check ) {
       ui.line_edit_master->setReadOnly(true);
       ui.line_edit_host->setReadOnly(true);
       ui.line_edit_topic->setReadOnly(true);
+
+      ui.btn_config->setEnabled(true);
+      ui.btn_launchPlanner->setEnabled(true);
+      ui.btn_launchPx4ctrl->setEnabled(true);
+      ui.btn_launchTakeoff->setEnabled(true);
+      ui.btn_launchVins->setEnabled(true);
     }
   }
 }
