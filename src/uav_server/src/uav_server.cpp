@@ -45,44 +45,43 @@ int main() {
     struct sockaddr_in cliaddr;
     socklen_t len = sizeof(cliaddr);	//--用来保存客户端的地址
     // 接收数据
-    pid_t vins_pid, px4ctrl_pid, takeoff_pid, ego_planner_pid;
+    pid_t vins_pid = 0, px4ctrl_pid = 0, takeoff_pid = 0, ego_planner_pid = 0;
     while (1) {
         memset(recvbuf, 0, sizeof(recvbuf));
         int num = recvfrom(fd, recvbuf, sizeof(recvbuf), 0, (struct sockaddr *)&cliaddr, &len);
-        if (strcmp(recvbuf, "vins") == 0)
+        printf("cmd received: %s\n", recvbuf);
+        if (strcmp(recvbuf, "vins") == 0 && vins_pid == 0)
         {
-            for (int i = 0; i < 10; i++) {
-                char buf[20];
-                sprintf(buf, "vins message %d", i+1);
-                sendto(fd, buf, strlen(buf) + 1, 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
+            switch (vins_pid = fork()) {
+            case -1:
+                error_handling("fork error");
+            case 0:
+                FILE *pip_output;
+                if ((pip_output = popen("roslaunch px4 indoor1.launch 2>&1", "r")) == NULL)
+                    error_handling("popen error");
+                while (1) {
+                    if (fgets(recvbuf, 512, pip_output))
+                        sendto(fd, recvbuf, strlen(recvbuf) + 1, 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
+                }
+                exit(0);
+            default:
+                printf("创建了子进程%d\n", vins_pid);
+                break;
             }
-            // FILE *pip_output;
-            // if ((pip_output = popen("roslaunch px4 indoor1.launch 2>&1 ", "r")) == NULL)
-            // {
-            //     printf("执行命令错误\n");
-            //     return 1;
-            // }
-            // while (1)
-            // {
-            //     if (fgets(recvbuf, 512, pip_output))
-            //     {
-            //         sendto(fd, recvbuf, strlen(recvbuf) + 1, 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
-            //     }
-            // }
-            // pclose(pip_output);
-        } else if (strcmp(recvbuf, "px4ctrl")) {
+        }
+        else if (strcmp(recvbuf, "px4ctrl") == 0) {
             for (int i = 0; i < 10; i++) {
                 char buf[20];
                 sprintf(buf, "px4ctrl message %d", i+1);
                 sendto(fd, buf, strlen(buf) + 1, 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
             }
-        } else if (strcmp(recvbuf, "takeoff")) {
+        } else if (strcmp(recvbuf, "takeoff") == 0) {
             for (int i = 0; i < 10; i++) {
                 char buf[20];
                 sprintf(buf, "takeoff message %d", i+1);
                 sendto(fd, buf, strlen(buf) + 1, 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
             }
-        } else if (strcmp(recvbuf, "planner")) {
+        } else if (strcmp(recvbuf, "planner") == 0) {
             for (int i = 0; i < 10; i++) {
                 char buf[20];
                 sprintf(buf, "planner message %d", i+1);
